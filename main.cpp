@@ -69,11 +69,17 @@ int main() {
 //MENU OPTIONS
 
 void addEstateToPerson (vector<Person> * people, vector<PersonEstate> *estates){
+
     printPeople(*people);
 
     string personEGN = Person::enterPersonEGN();
 
     Person person = Person::findPersonByEGN(personEGN, *people);
+
+    if(person.getEgn() == "none"){
+        cout<<"There are no people with this EGN: "<< personEGN << endl;
+        return;
+    }
 
     findPersonToAddAddress(person, estates);
 }
@@ -105,6 +111,7 @@ void findAllEstatesByEGN(const vector<PersonEstate>& estates, const vector<Perso
         cout<<"There are no people with this EGN: "<< egn << endl;
         return;
     }
+
     PersonEstate::findAllEstates(egn, estates, name);
 }
 
