@@ -69,6 +69,8 @@ public:
         }
         Person person;
 
+        person.setEgn("none");
+
         return person;
     }
 
