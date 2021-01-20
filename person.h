@@ -6,13 +6,16 @@
 #define UNTITLED_PERSON_H
 
 #include <string>
+#include <regex>
+#include <iostream>
 
 using namespace std;
 
 
-class Person{
+class Person{ //декларация на базов клас
 private:
-    int id;
+
+    //член променливи на класа
     string name;
     string egn;
     string address;
@@ -20,13 +23,11 @@ private:
 public:
     Person();
 
-    Person(int id, const string &name, const string &egn, const string &address);
+    Person(string name, string egn, string address); //декларация на констуктор
 
-    virtual ~Person();
+    ~Person(); // декларация на деконструктор
 
-    int getId() const;
-
-    void setId(int id);
+    //декларация на член-функции
 
     const string &getName() const;
 
@@ -39,6 +40,55 @@ public:
     const string &getAddress() const;
 
     void setAddress(const string &address);
+
+    static string enterPersonEGN() {
+        string egn;
+        regex rx(R"((?:^|\s)([+-]?[[:digit:]]+(?:\.[[:digit:]]+)?)(?=$|\s))");
+        smatch m;
+
+        for(;;) {
+            cout << "Enter person EGN: " << endl;
+            getline(cin, egn);
+
+            if(regex_search(egn, rx)){
+                break;
+            }
+
+            cout<<"You entered an invalid EGN"<<endl;
+        }
+
+        return egn;
+    }
+
+    static Person findPersonByEGN(const string& egn, const vector<Person>& people){
+        for (auto & i : people){
+            if (i.getEgn() == egn){
+                cout << "egn: " << egn << endl;
+                return i;
+            }
+        }
+        Person person;
+
+        return person;
+    }
+
+    static void printPerson(const Person& person){
+        cout<<"Person"<<endl;
+        cout<<"NAME: "<< person.getName()<<endl;
+        cout<<"ENG: "<< person.getEgn()<<endl;
+        cout<<"ADDRESS: "<< person.getAddress()<<endl;
+    }
+
+    static string findPersonName( const vector<Person>& people, const string& egn){
+        string name;
+
+        for(const auto& person: people){
+            if(person.getEgn() == egn){
+                return person.getName();
+            }
+        }
+        return "none";
+    }
 };
 
 

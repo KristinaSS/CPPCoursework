@@ -3,29 +3,10 @@
 //
 
 #include "PersonEstate.h"
-
-#include "person.h"
-
-
-PersonEstate::PersonEstate() {}
+#include <iostream>
 
 PersonEstate::~PersonEstate() {
 
 }
 
-int PersonEstate::getId() const {
-    return id;
-}
-
-void PersonEstate::setId(int id) {
-    PersonEstate::id = id;
-}
-
-const Person &PersonEstate::getPerson() const {
-    return person;
-}
-
-void PersonEstate::setPerson(const Person &person) {
-    PersonEstate::person = person;
-}
-
+PersonEstate::PersonEstate(const string &name, const string &egn, const string &address) : Person(name, egn, address) {}

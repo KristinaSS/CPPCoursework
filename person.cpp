@@ -4,26 +4,18 @@
 
 #include "person.h"
 #include <string>
+#include <utility>
 using namespace  std;
-
-
-Person::Person(int id, const string &name, const string &egn, const string &address) : id(id), name(name), egn(egn),
-                                                                                       address(address) {
-
-}
 
 Person::Person() {}
 
+Person::Person(string name, string egn, string address) : name(std::move(name)), egn(std::move(egn)),
+                                                                                       address(std::move(address)) {
+
+}
+
 Person::~Person() {
 
-}
-
-int Person::getId() const {
-    return id;
-}
-
-void Person::setId(int id) {
-    Person::id = id;
 }
 
 const string &Person::getName() const {
@@ -49,5 +41,4 @@ const string &Person::getAddress() const {
 void Person::setAddress(const string &address) {
     Person::address = address;
 }
-
 

@@ -6,8 +6,6 @@
 #include "PersonEstate.h"
 
 
-void addAddressToPerson(PersonEstate *personEstate, char * address);
-
 vector<Person> createPeople ();
 
 void printPeople (const vector<Person>&people);
@@ -20,29 +18,13 @@ char* enterAddress(const string& name);
 
 int chooseMenuOption();
 
-void createPersonEstateObject(const Person& person, char * address, vector<PersonEstate> *personEstateList);
-
-int choosePersonById();
-
-Person findPersonById(int id, const vector<Person>& people);
-
 void addEstateToPerson (vector<Person> * people, vector<PersonEstate> *estates);
 
 void findAllPeopleThatPersonAddressIsTheSameOneOfEstate(const vector<PersonEstate> &estates);
 
-bool checkIfPersonalAddressEqualToAnyOfEstate (const string& address, const PersonEstate& personEstate);
-
-void printPerson(const Person& person);
-
 void findAllEstatesByEGN(const vector<PersonEstate>& estates, const vector<Person>& people);
 
 string enterEGN();
-
-void findAllEstates(const string& egn, const vector<PersonEstate>& estates, const string& name);
-
-string findPersonName( const vector<Person>& people, const string& egn);
-
-void printAllEstates(const PersonEstate& personEstate);
 
 
 //MAIN
@@ -89,9 +71,9 @@ int main() {
 void addEstateToPerson (vector<Person> * people, vector<PersonEstate> *estates){
     printPeople(*people);
 
-    int personId = choosePersonById();
+    string personEGN = Person::enterPersonEGN();
 
-    Person person = findPersonById(personId, *people);
+    Person person = Person::findPersonByEGN(personEGN, *people);
 
     findPersonToAddAddress(person, estates);
 }
@@ -101,10 +83,10 @@ void findAllPeopleThatPersonAddressIsTheSameOneOfEstate(const vector<PersonEstat
     int isFoundPerson = 0;
 
     for (auto & estate : estates){
-        personAddress = estate.getPerson().getAddress();
+        personAddress = estate.getAddress();
 
-        if(checkIfPersonalAddressEqualToAnyOfEstate(personAddress, estate)){
-            printPerson(estate.getPerson());
+        if(PersonEstate::checkIfPersonalAddressEqualToAnyOfEstate(personAddress, estate)){
+            Person::printPerson(estate);
             isFoundPerson = 1;
         }
     }
@@ -117,52 +99,29 @@ void findAllPeopleThatPersonAddressIsTheSameOneOfEstate(const vector<PersonEstat
 void findAllEstatesByEGN(const vector<PersonEstate>& estates, const vector<Person>& people){
     string egn = enterEGN();
 
-    string name = findPersonName(people, egn);
+    string name = Person::findPersonName(people, egn);
 
     if(name == "none"){
         cout<<"There are no people with this EGN: "<< egn << endl;
         return;
     }
-    findAllEstates(egn, estates, name);
-
+    PersonEstate::findAllEstates(egn, estates, name);
 }
-
-
 
 //ENTERING INFO
 
 char * enterAddress(const string& name){
     string address;
 
-
     cout << "Enter estate address for: "<< name << endl;
     getline(cin, address);
 
-    cout << "enter aadress: "<< address << endl;
+    cout << "enter address: "<< address << endl;
 
     char * charPtr = new char[address.length() + 1];
     strcpy(charPtr, address.c_str());
 
     return charPtr;
-}
-
-int choosePersonById() {
-    string id;
-    regex rx(R"((?:^|\s)([+-]?[[:digit:]]+(?:\.[[:digit:]]+)?)(?=$|\s))");
-    smatch m;
-
-    for(;;) {
-        cout << "Enter person id: " << endl;
-        getline(cin, id);
-
-        if(regex_search(id, rx)){
-            break;
-        }
-
-        cout<<"You entered an invalid ID"<<endl;
-    }
-
-    return stoi(id);
 }
 
 int chooseMenuOption(){
@@ -221,73 +180,19 @@ void printPeople(const vector<Person>&people) {
 
     for (const auto& person: people){
 
-        cout << "Id: " << person.getId();
+        cout << "EGN: " << person.getEgn();
         cout << " Name -> "<< person.getName() <<  endl;
     }
 
 }
 
-void printPerson(const Person& person){
-    cout<<"Person"<<endl;
-    cout<<"ID: " << person.getId()<<endl;
-    cout<<"NAME: "<< person.getName()<<endl;
-    cout<<"ENG: "<< person.getEgn()<<endl;
-    cout<<"ADDRESS: "<< person.getAddress()<<endl;
-}
-
-void printAllEstates(const PersonEstate& personEstate){
-
-    for(auto & i : personEstate.adr){
-        if(i!= nullptr){
-            cout<< "Estate Address: " << i << endl;
-        }
-    }
-}
-
 //OTHER
-string findPersonName( const vector<Person>& people, const string& egn){
-    string name;
-
-    for(const auto& person: people){
-        if(person.getEgn() == egn){
-            return person.getName();
-        }
-    }
-    return "none";
-}
-
-void findAllEstates(const string& egn, const vector<PersonEstate>& estates, const string& name){
-
-    cout<<"All estates that belong to :" << name << "with EGN: " << egn << endl;
-
-    for(const auto& personEstate: estates){
-        if(personEstate.getPerson().getEgn() == egn){
-            printAllEstates(personEstate);
-            return;
-        }
-    }
-    cout<< "This person doesnt own any estates!"<< endl;
-
-}
-
-bool checkIfPersonalAddressEqualToAnyOfEstate (const string& address, const PersonEstate& personEstate){
-   for (auto & i : personEstate.adr){
-       if(i== nullptr){
-           return false;
-       }
-       if(address == i){
-           return true;
-       }
-   }
-    return false;
-}
 
 vector<Person> createPeople(){
     vector<Person> people;
 
     Person person1;
 
-    person1.setId(1);
     person1.setName("Kristina Stoyanova");
     person1.setEgn("1234567890");
     person1.setAddress("ul Hristo Botev #97 Skutare");
@@ -295,49 +200,42 @@ vector<Person> createPeople(){
 
     Person person2;
 
-    person2.setId(2);
     person2.setName("Ivelin Nikolov");
     person2.setEgn("1234567891");
     person2.setAddress("ul Ivan Vazov #93 Veliko Turnavo");
 
     Person person3;
 
-    person3.setId(3);
     person3.setName("Hristina Varbanova");
     person3.setEgn("1234567892");
     person3.setAddress("ul Dimcho Deleqnov #91 Veliko Turnavo");
 
     Person person4;
 
-    person4.setId(4);
     person4.setName("Kristian Halachev");
     person4.setEgn("1234567893");
     person4.setAddress("ul 8mi Mart #97 Veliko Turnavo");
 
     Person person5;
 
-    person5.setId(5);
     person5.setName("Valentin Aleksiev");
     person5.setEgn("1234567899");
     person5.setAddress("ul 6 septemvri #98 Plovdiv");
 
     Person person6;
 
-    person6.setId(6);
     person6.setName("Georgi Georgiev");
     person6.setEgn("1234567898");
     person6.setAddress("ul Vasil Levski #99 Sofia");
 
     Person person7;
 
-    person7.setId(7);
     person7.setName("Uliqn Georgiev");
     person7.setEgn("1234567897");
     person7.setAddress("ul Elin Pelin #96 Sofia");
 
     Person person8;
 
-    person8.setId(8);
     person8.setName("Diyan Stoichev");
     person8.setEgn("1234567895");
     person8.setAddress("ul Elizabeta Bagrqna #94 Sofia");
@@ -359,51 +257,11 @@ void findPersonToAddAddress (const Person& person, vector<PersonEstate>* personE
     char * address = enterAddress(person.getName());
 
     for (auto & i : *personEstateList){
-        if (i.getPerson().getId() == person.getId()){
-            addAddressToPerson(&i, address);
+        if (i.getEgn() == person.getEgn()){
+            PersonEstate::addAddressToPerson(&i, address);
             return;
         }
     }
 
-    createPersonEstateObject(person,address, personEstateList);
-
-}
-
-//kak da napravq tova da raboti s getters and setters
-
-void addAddressToPerson(PersonEstate *personEstate, char *address){
-
-
-    for (int i = 0; i < 5;i++){
-        if(personEstate->adr[i] == nullptr){
-            personEstate->adr[i] = address;
-            return;
-        }
-        if  (i == 4) {
-            cout<<"This person already owns 5 estates!"<<endl;
-            return;
-        }
-    }
-}
-
-void createPersonEstateObject(const Person& person, char * address, vector<PersonEstate> *personEstateList) {
-    PersonEstate personEstate;
-    personEstate.setId((int)personEstateList->size()+1);
-    personEstate.setPerson(person);
-    personEstate.adr[0] = address;
-    personEstate.adr[1]= personEstate.adr[2] = personEstate.adr[3] = personEstate.adr[4] = nullptr;
-
-    personEstateList->push_back(personEstate);
-}
-
-Person findPersonById(int id, const vector<Person>& people){
-    for (auto & i : people){
-        if (i.getId() == id){
-            cout << "id: " << id << endl;
-            return i;
-        }
-    }
-    Person person;
-
-    return person;
+    PersonEstate::createPersonEstateObject(person.getName(),person.getEgn(), person.getAddress(),address, personEstateList);
 }
