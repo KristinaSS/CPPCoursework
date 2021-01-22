@@ -11,7 +11,6 @@
 
 using namespace std;
 
-
 class Person{ //декларация на базов клас
 private:
 
@@ -26,6 +25,7 @@ public:
     Person(string name, string egn, string address); //декларация на констуктор
 
     ~Person(); // декларация на деконструктор
+
 
     //декларация на член-функции
 
@@ -75,10 +75,8 @@ public:
     }
 
     static void printPerson(const Person& person){
-        cout<<"Person"<<endl;
-        cout<<"NAME: "<< person.getName()<<endl;
-        cout<<"ENG: "<< person.getEgn()<<endl;
-        cout<<"ADDRESS: "<< person.getAddress()<<endl;
+        const Person& obj = person;
+        cout<<obj;
     }
 
     static string findPersonName( const vector<Person>& people, const string& egn){
@@ -91,7 +89,21 @@ public:
         }
         return "none";
     }
+
+    friend ostream& operator<<(ostream &os,const Person & p);
 };
 
+//предефиниране на оператор
+ostream& operator<<(ostream& os, const Person& p){
+    os<<"Person"<<endl;
+    os<<"NAME: ";
+    os<<p.getName()<<endl;
+    cout<<"ENG: ";
+    os<<p.getEgn()<<endl;
+    cout<<"ADDRESS: ";
+    os<<p.getAddress()<<endl;
+
+    return os;
+}
 
 #endif //UNTITLED_PERSON_H
