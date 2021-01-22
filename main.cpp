@@ -26,6 +26,17 @@ void findAllEstatesByEGN(const vector<PersonEstate>& estates, const vector<Perso
 
 string enterEGN();
 
+//Predefining operator
+
+/*ostream& operator<<(ostream &o1, Person &o2){
+    cout<<"EGN: ";
+    o1<<o2.getEgn();
+    cout<<" Name -> ";
+    o1<<o2.getName()<<endl;
+
+    return o1;
+}*/
+
 
 //MAIN
 
@@ -189,6 +200,9 @@ void printPeople(const vector<Person>&people) {
 
         cout << "EGN: " << person.getEgn();
         cout << " Name -> "<< person.getName() <<  endl;
+/*        Person obj = person;
+
+        cout<<obj;*/
     }
 
 }
