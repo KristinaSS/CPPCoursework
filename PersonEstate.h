@@ -92,8 +92,10 @@ public:
         file << "EGN: " << personEstate.getEgn()<<endl;
         file << "Address: " << personEstate.getAddress() << endl;
         file << "Estates: ";
-        for  (auto i: personEstate.adr){
-            file << *i;
+        for  (auto &i: personEstate.adr){
+            if(i!= nullptr) {
+                file << i;
+            }
         }
         file.close();
     }
