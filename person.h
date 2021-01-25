@@ -75,8 +75,7 @@ public:
     }
 
     static void printPerson(const Person& person){
-        const Person& obj = person;
-        cout<<obj;
+        cout<<person;
     }
 
     static string findPersonName( const vector<Person>& people, const string& egn){
