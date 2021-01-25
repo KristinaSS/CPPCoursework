@@ -92,17 +92,4 @@ public:
     friend ostream& operator<<(ostream &os,const Person & p);
 };
 
-//предефиниране на оператор
-ostream& operator<<(ostream& os, const Person& p){
-    os<<"Person"<<endl;
-    os<<"NAME: ";
-    os<<p.getName()<<endl;
-    cout<<"ENG: ";
-    os<<p.getEgn()<<endl;
-    cout<<"ADDRESS: ";
-    os<<p.getAddress()<<endl;
-
-    return os;
-}
-
 #endif //UNTITLED_PERSON_H

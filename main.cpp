@@ -26,6 +26,8 @@ void findAllEstatesByEGN(const vector<PersonEstate>& estates, const vector<Perso
 
 string enterEGN();
 
+void addToFileAllPeopleWithTheirEstates(const vector<PersonEstate>& personEstateList);
+
 //MAIN
 
 int main() {
@@ -61,6 +63,8 @@ int main() {
         }
 
     }
+
+    addToFileAllPeopleWithTheirEstates(personEstateList);
 
     return 0;
 }
@@ -271,3 +275,10 @@ void findPersonToAddAddress (const Person& person, vector<PersonEstate>* personE
 
     PersonEstate::createPersonEstateObject(person.getName(),person.getEgn(), person.getAddress(),address, personEstateList);
 }
+
+void addToFileAllPeopleWithTheirEstates(const vector<PersonEstate>& personEstateList){
+    for(const auto& i : personEstateList){
+        PersonEstate::addToFile(i, "data.txt");
+    }
+}
+

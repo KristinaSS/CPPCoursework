@@ -8,11 +8,12 @@
 #include "person.h"
 #include <vector>
 #include <iostream>
+#include <fstream>
 
 class PersonEstate: public Person{ //декларация на производен клас
 private:
 
-    char *adr[5]{};
+    char *adr[5]{0};
 
     static void printAllEstates(const PersonEstate& personEstate){
 
@@ -76,6 +77,27 @@ public:
         cout<< "This person doesnt own any estates!"<< endl;
 
     }
+
+    static void addToFile (const PersonEstate& personEstate, string filename){
+        ofstream file;
+
+        file.open(filename.c_str(), ios::app);
+
+        if(!file.good()){
+            cout << "Error creating c++.out.txt";
+            exit(1);
+        }
+        file << "Person: " << endl;
+        file << "Name: " << personEstate.getName()<<endl;
+        file << "EGN: " << personEstate.getEgn()<<endl;
+        file << "Address: " << personEstate.getAddress() << endl;
+        file << "Estates: ";
+        for  (auto i: personEstate.adr){
+            file << *i;
+        }
+        file.close();
+    }
+
 };
 
 
