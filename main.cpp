@@ -28,22 +28,21 @@ string enterEGN();
 
 void addToFileAllPeopleWithTheirEstates(const vector<PersonEstate>& personEstateList);
 
-//MAIN
-
+//Мейн функцията
 int main() {
 
-    vector<Person> peopleVector = createPeople();
+    vector<Person> peopleVector = createPeople(); //Инициализирам personVector със хора
 
-    vector<PersonEstate> personEstateList;
+    vector<PersonEstate> personEstateList; // създаваме вектор-а personEstateList
 
-    int option;
-    int isActive = 1;
+    int option; //в тази променлива записваме стойност на опцията която ще въведем
+    bool isActive = true; // проверява дали сме готови да излезнем от безкрайния цикъл
 
     while (isActive) {
-        menu();
-        option = chooseMenuOption();
+        menu();// викаме функция за приниране на менюто
+        option = chooseMenuOption(); // викаме функция да дадем стойност на променливата option
 
-        switch (option) {
+        switch (option) {//използваме switch-case да избирем в коя функционалност ще влезнем
             case 1:
                 addEstateToPerson(&peopleVector, &personEstateList);
                 break;
@@ -54,72 +53,76 @@ int main() {
                 findAllEstatesByEGN(personEstateList, peopleVector);
                 break;
             case 4:
-                cout << "Goodbye!" << endl;
-                isActive = 0;
+                cout << "Goodbye!" << endl; // излизаме от цикъла
+                isActive = false; // задаваме isActive на false за да можем да излезнем от цикъла
                 break;
             default:
-                cout << "Not a valid option." << endl;
+                cout << "Not a valid option." << endl; // при опция която не е валидна
                 break;
         }
 
     }
 
-    addToFileAllPeopleWithTheirEstates(personEstateList);
+    addToFileAllPeopleWithTheirEstates(personEstateList); // викаме фунция която записва всички хора с поне един имот във файл
 
     return 0;
 }
 
-//MENU OPTIONS
+//Опции от менюто
 
+//функция която вика набор от други функции за да запише адрес на имот който човека притежава
 void addEstateToPerson (vector<Person> * people, vector<PersonEstate> *estates){
 
-    printPeople(*people);
+    printPeople(*people);// вика функция която изписва всички хора със имената им и егн-тата им
 
-    string personEGN = Person::enterPersonEGN();
+    string personEGN = Person::enterPersonEGN();// запиваш във personEGN егн-то на човек, на който искаш да запишеш адреса на имота
 
-    Person person = Person::findPersonByEGN(personEGN, *people);
+    Person person = Person::findPersonByEGN(personEGN, *people);// намираш човека със егн-то което си въвел
 
-    if(person.getEgn() == "none"){
+    if(person.getEgn() == "none"){ //ако егн-то е "none" означава, че няма човек с такова ЕГН и се излиза от функцията
         cout<<"There are no people with this EGN: "<< personEGN << endl;
         return;
     }
 
-    findPersonToAddAddress(person, estates);
+    findPersonToAddAddress(person, estates); // вика се фунция която създава personEstate обект, и я добавя във вектора estates
 }
 
+//Вика функции с цел да изведе инфорацията за лицата, чиито адрес съвпада с някой от адресите на притежаваните имоти
 void findAllPeopleThatPersonAddressIsTheSameOneOfEstate(const vector<PersonEstate> &estates) {
     string personAddress;
-    int isFoundPerson = 0;
+    int isFoundPerson = 0;//индикатор дали е намерен човека
 
     for (auto & estate : estates){
         personAddress = estate.getAddress();
 
         if(PersonEstate::checkIfPersonalAddressEqualToAnyOfEstate(personAddress, estate)){
-            Person::printPerson(estate);
-            isFoundPerson = 1;
+            Person::printPerson(estate);// ако е намерен такъв човек се притира в конзолата
+            isFoundPerson = 1;// маркера става на 1
         }
     }
 
-    if(isFoundPerson == 0){
+    if(isFoundPerson == 0){// ако маркера остане 0 означава, че не е намерен такъв човек и принтира съобщение в конзолата
         cout<< "No People had the same personal address as one of their estates " << endl;
     }
 }
 
+//Вика функции с цел да изведе притежаваните имоти от лице, зададено от ЕГН-то
 void findAllEstatesByEGN(const vector<PersonEstate>& estates, const vector<Person>& people){
-    string egn = enterEGN();
+    string egn = enterEGN();//Вика функция за въвеждане на егн
 
-    string name = Person::findPersonName(people, egn);
+    string name = Person::findPersonName(people, egn);//намира името на човека ако няма такъв човек с такова егн връша "none"
 
     if(name == "none"){
         cout<<"There are no people with this EGN: "<< egn << endl;
         return;
     }
 
-    PersonEstate::findAllEstates(egn, estates, name);
+    PersonEstate::findAllEstates(egn, estates, name);//вика се функция която изважда адресите на всички хора с това егн
 }
 
-//ENTERING INFO
+//Фунции за въвеждане на информация
 
+//Фиункция която връща адрес който да се запомети като имот на някого
 char * enterAddress(const string& name){
     string address;
 
@@ -134,16 +137,17 @@ char * enterAddress(const string& name){
     return charPtr;
 }
 
+//функция за въвеждане за избор на опция от менюо
 int chooseMenuOption(){
     string option;
-    regex rx(R"((?:^|\s)([+-]?[[:digit:]]+(?:\.[[:digit:]]+)?)(?=$|\s))");
+    regex rx(R"((?:^|\s)([+-]?[[:digit:]]+(?:\.[[:digit:]]+)?)(?=$|\s))"); // регекс който проверява дали стринга е чило
     smatch m;
 
     for(;;) {
         cout << "Choose menu Option:" << endl;
         getline(cin, option);
 
-        if(regex_search(option, rx) && (option =="1" || option == "2" || option == "3" || option == "4")){
+        if(regex_search(option, rx) && (option =="1" || option == "2" || option == "3" || option == "4")){// проверява дали стринга е раен на 1,2,3 или 4 (единствените избори)
             break;
         }
 
@@ -154,16 +158,17 @@ int chooseMenuOption(){
     return stoi(option);
 }
 
+//функция за въвеждане на ЕГН
 string enterEGN(){
     string egn;
-    regex rx(R"((?:^|\s)([+-]?[[:digit:]]+(?:\.[[:digit:]]+)?)(?=$|\s))");
+    regex rx(R"((?:^|\s)([+-]?[[:digit:]]+(?:\.[[:digit:]]+)?)(?=$|\s))");// регекс който проверява дали стринга е чило
     smatch m;
 
     for (;;) {
         cout << "Enter the person's EGN:" << endl;
         getline(cin, egn);
 
-        if(regex_search(egn, rx)){
+        if(regex_search(egn, rx)){//проверява дали въведеното е стринг от само от цифри
             break;
         }
 
@@ -173,8 +178,9 @@ string enterEGN(){
     return egn;
 }
 
-//PRINTING INFO
+//Функции за принтиране на информация
 
+//фунция за притиране на менюто
 void menu () {
     cout << "-----Menu-----" << endl;
     cout << "--------------" << endl;
@@ -184,6 +190,7 @@ void menu () {
     cout << "4. Exit" << endl;
 }
 
+//фунжия за приниране на информация за хората
 void printPeople(const vector<Person>&people) {
 
     cout << "-----People-----" << endl;
@@ -196,8 +203,9 @@ void printPeople(const vector<Person>&people) {
 
 }
 
-//OTHER
+//Други функции
 
+//фунция която иницилизира вектор пълен с хора
 vector<Person> createPeople(){
     vector<Person> people;
 
@@ -262,23 +270,25 @@ vector<Person> createPeople(){
     return people;
 }
 
+//набор от фунции които имат за цел с въведения адрвс да се добави към масива от адреси на  имоти на даден човек
 void findPersonToAddAddress (const Person& person, vector<PersonEstate>* personEstateList) {
 
-    char * address = enterAddress(person.getName());
+    char * address = enterAddress(person.getName());// вика се фунция за въвеждане не адреса
 
     for (auto & i : *personEstateList){
         if (i.getEgn() == person.getEgn()){
-            PersonEstate::addAddressToPerson(&i, address);
+            PersonEstate::addAddressToPerson(&i, address);//вика се фунция за добавяне на този адрес към човека
             return;
         }
     }
 
-    PersonEstate::createPersonEstateObject(person.getName(),person.getEgn(), person.getAddress(),address, personEstateList);
+    PersonEstate::createPersonEstateObject(person.getName(),person.getEgn(), person.getAddress(),address, personEstateList);//вика се функция за да се добави елемент към вектора от имоти
 }
 
+//фунция за записване във файл всички хора които имат имоти и техните имоти във файла "data.txt"
 void addToFileAllPeopleWithTheirEstates(const vector<PersonEstate>& personEstateList){
     for(const auto& i : personEstateList){
-        PersonEstate::addToFile(i, "data.txt");
+        PersonEstate::addToFile(i, "data.txt");//вика се фунция да се запише съответния обек във файла
     }
 }
 

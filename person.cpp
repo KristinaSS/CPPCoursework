@@ -7,17 +7,20 @@
 #include <utility>
 using namespace  std;
 
+//дефиница на дефаунтен конструктор
 Person::Person() {}
 
+//дефиница на деконструктор
 Person::Person(string name, string egn, string address) : name(std::move(name)), egn(std::move(egn)),
                                                                                        address(std::move(address)) {
 
 }
-
+//дефиница на деконструктор
 Person::~Person() {
-
+cout<<"Deconstructing Person Object"<<endl;
 }
 
+//дефиница на гетъри и сетъри
 const string &Person::getName() const {
     return name;
 }
